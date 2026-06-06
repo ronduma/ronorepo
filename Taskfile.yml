@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+dotenv: ["/docker/env/static.env", "/docker/env/user.env"]
+
+vars:
+  BUILD_DIR: docker
+  ENV_DIR: "{{.BUILD_DIR}}/env"
+
+tasks:
+  default:
+    desc: welcome message
+    cmds:
+      - echo "welcome to the donna taskfile."
+      - task -l --sort none
+    silent: true
+  list-services:
+    desc: list services and their associated ports
+    cmds:
+      - echo -e "\033[32m🌐 [INFO]\033[0m frontend:" " http://localhost:3000"
+      - echo -e "\033[32m🌐 [INFO]\033[0m backend:" " http://localhost:8000/docs"
+    silent: true
+  up:
+    desc: spin up docker containers
+    cmds:
+      - docker compose -f ./"{{.BUILD_DIR}}"/docker-compose.yaml --env-file "{{.ENV_DIR}}/static.env" --env-file "{{.ENV_DIR}}/user.env" up -d
+      - echo -e "\033[32m✅ [INFO]\033[0m donna is up and running! 🚀"
+      - echo -e "\033[32m🌐 [INFO]\033[0m frontend:" " http://localhost:3000"
+      - echo -e "\033[32m🌐 [INFO]\033[0m backend:" " http://localhost:8000/docs"
+    silent: true
+  down:
+    desc: spin down docker containers
+    cmds:
+      - docker compose -f ./"{{.BUILD_DIR}}"/docker-compose.yaml --env-file "{{.ENV_DIR}}/static.env" --env-file "{{.ENV_DIR}}/user.env" down
+      - echo -e "\033[31m🛑 [INFO]\033[0m donna is down!"
+    silent: true
