@@ -1,0 +1,46 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend.dockerfile
+    image: ronorepo-backend:latest
+    container_name: ronorepo-backend
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_INTERNAL_PORT}"
+    volumes:
+      - ../src/backend:/app
+    networks:
+      - ronorepo-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:${BACKEND_INTERNAL_PORT}/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend.dockerfile
+    image: ronorepo-frontend:latest
+    container_name: ronorepo-frontend
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_INTERNAL_PORT}"
+    volumes:
+      - ../src/frontend:/app
+      - frontend_node_modules:/app/node_modules
+    networks:
+      - ronorepo-network
+    environment:
+      - BACKEND_URL=http://localhost:${BACKEND_PORT}
+    depends_on:
+      backend:
+        condition: service_healthy
+networks:
+  ronorepo-network:
+    driver: bridge
+volumes:
+  frontend_node_modules:
