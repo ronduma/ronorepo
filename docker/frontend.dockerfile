@@ -1,15 +1,12 @@
 # syntax=docker/dockerfile:1
 FROM oven/bun:alpine
 
-WORKDIR /app
-
-# copy package files
+# install deps at root so the /app bind mount doesn't shadow node_modules
+WORKDIR /
 COPY src/frontend/package.json src/frontend/bun.lock ./
-
-# install dependencies
 RUN bun install --frozen-lockfile
 
-# copy source code
+WORKDIR /app
 COPY src/frontend/ .
 
 # expose the development port
