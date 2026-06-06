@@ -35,3 +35,9 @@ tasks:
       - docker compose -f ./"{{.BUILD_DIR}}"/docker-compose.yaml --env-file "{{.ENV_DIR}}/static.env" --env-file "{{.ENV_DIR}}/user.env" down
       - echo -e "\033[31m🛑 [INFO]\033[0m donna is down!"
     silent: true
+  rebuild-frontend:
+    desc: rebuild frontend container
+    cmds:
+      - docker compose -f ./"{{.BUILD_DIR}}"/docker-compose.yaml --env-file "{{.ENV_DIR}}/static.env" --env-file "{{.ENV_DIR}}/user.env" build frontend --no-cache
+      - echo -e "\033[32m✅ [INFO]\033[0m frontend container rebuilt! 🚀"
+    silent: true
