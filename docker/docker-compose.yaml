@@ -34,7 +34,7 @@ services:
     networks:
       - ronorepo-network
     environment:
-      - BACKEND_URL=http://localhost:${BACKEND_PORT}
+      - BACKEND_URL=http://backend:${BACKEND_INTERNAL_PORT}
     depends_on:
       backend:
         condition: service_healthy
