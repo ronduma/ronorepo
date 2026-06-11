@@ -11,7 +11,7 @@ if [ $UID -gt 10000 ]; then
   # use arithmetic calculation for UIDs greater than 10000 (shared dev environment)
   ADJUSTED_UID=$(( ($UID % 10000) + 1000 ))
   _CALCULATED_PORT=$(( ($ADJUSTED_UID - 1000) * 50 + 10001))
-  INITIAL_PORT=$((echo $_CALCULATED_PORT))
+  INITIAL_PORT=$_CALCULATED_PORT
   FRONTEND_PORT=$INITIAL_PORT
   BACKEND_PORT=$(($INITIAL_PORT + 1))
   COMPOSE_PROJECT_NAME=$USER
