@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # accept output directory as parameter with default to env
-OUTPUT_DIR="${1:-env}"
+OUTPUT_DIR="${1:-docker/env}"
 
 # create user.env configuration file in the specified directory
 
