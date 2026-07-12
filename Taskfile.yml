@@ -2,7 +2,7 @@
 
 version: "3"
 
-dotenv: ["/docker/env/static.env", "/docker/env/user.env"]
+dotenv: ["docker/env/static.env", "docker/env/user.env"]
 
 vars:
   BUILD_DIR: docker
