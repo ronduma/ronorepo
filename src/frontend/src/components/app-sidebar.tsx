@@ -23,7 +23,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// icons
+// lucide icons
 import { MessageSquare, SquarePen } from "lucide-react";
 
 export function AppSidebar() {

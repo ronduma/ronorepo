@@ -1,3 +1,7 @@
+/**
+ * API calls for the backend's chat endpoint.
+ */
+
 import { apiFetch } from "@/api";
 
 /**
