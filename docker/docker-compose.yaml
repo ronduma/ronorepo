@@ -15,7 +15,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -f http://localhost:${BACKEND_INTERNAL_PORT}/health || exit 1",
+          "curl -f http://localhost:${BACKEND_INTERNAL_PORT}/api/health || exit 1",
         ]
       interval: 10s
       timeout: 5s
