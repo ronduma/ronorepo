@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Face Swap</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Face Swap</h1>
+      <div class="badges">
+        <span class="badge ok" title="This app makes no network requests; outbound traffic is blocked">offline</span>
+        <span id="device" class="badge">checking device…</span>
+      </div>
+    </header>
+
+    <main>
+      <p id="hint" class="hint">Start by adding the photo you want to change.</p>
+
+      <div class="columns">
+        <section class="card" id="target-card">
+          <div class="card-head">
+            <h2><span class="step">1</span> Photo to change</h2>
+            <label class="toggle" title="Runs detection at higher resolution to catch small or distant faces">
+              <input type="checkbox" id="thorough" /> find small faces
+            </label>
+          </div>
+          <label class="drop" id="target-drop">
+            <input type="file" accept="image/*" id="target-input" hidden />
+            <span>Drop a photo here or <u>browse</u></span>
+          </label>
+          <div class="stage" id="target-stage" hidden></div>
+          <div class="strip" id="target-strip"></div>
+        </section>
+
+        <section class="card" id="source-card">
+          <div class="card-head">
+            <h2><span class="step">2</span> Replacement face</h2>
+          </div>
+          <label class="drop" id="source-drop">
+            <input type="file" accept="image/*" id="source-input" multiple hidden />
+            <span>Drop one or more photos of the new face or <u>browse</u></span>
+          </label>
+          <div class="tabs" id="source-tabs"></div>
+          <div class="stage" id="source-stage" hidden></div>
+          <div class="strip" id="source-strip"></div>
+        </section>
+      </div>
+
+      <section class="card" id="plan-card">
+        <div class="card-head">
+          <h2><span class="step">3</span> Swap</h2>
+        </div>
+        <ul class="plan" id="plan">
+          <li class="empty">No faces paired yet.</li>
+        </ul>
+        <div class="controls">
+          <label class="toggle" id="enhance-wrap" title="Sharpens the swapped face with GFPGAN">
+            <input type="checkbox" id="enhance" checked /> enhance face
+          </label>
+          <label class="slider" id="blend-wrap">
+            strength <input type="range" id="blend" min="0" max="100" value="80" />
+            <output id="blend-out">80%</output>
+          </label>
+          <label class="select">
+            format
+            <select id="format">
+              <option value="png">PNG</option>
+              <option value="jpg">JPG</option>
+            </select>
+          </label>
+          <button id="swap-btn" class="primary" disabled>Swap faces</button>
+        </div>
+      </section>
+
+      <section class="card" id="result-card" hidden>
+        <div class="card-head">
+          <h2>Result</h2>
+          <div class="actions">
+            <button id="compare-btn" title="Hold to see the original">Hold to compare</button>
+            <button id="reuse-btn" title="Swap more faces on top of this result">Use as new photo</button>
+            <a id="download" class="button primary" download>Download</a>
+          </div>
+        </div>
+        <div class="result"><img id="result-img" alt="Swapped result" /></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
