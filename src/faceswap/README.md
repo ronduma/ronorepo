@@ -9,6 +9,8 @@ An airgapped face swapper that runs on your own GPU. Everything happens on your 
 
 Models: SCRFD-10G (detection), ArcFace R50 (identity), inswapper_128 (swap), and optionally GFPGAN 1.4 (sharpens the swapped face). All run through ONNX Runtime on CUDA (NVIDIA) or DirectML (any DirectX 12 GPU on Windows), with CPU as a fallback.
 
+For a walkthrough of the pipeline, models and offline guard, see [HOW_IT_WORKS.md](HOW_IT_WORKS.md).
+
 ## Requirements
 
 - Python 3.11–3.13 (3.12 recommended) and [uv](https://docs.astral.sh/uv/)
