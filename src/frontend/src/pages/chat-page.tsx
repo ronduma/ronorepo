@@ -10,9 +10,18 @@ import { useChatContext } from "@/components/chat/chat-provider";
 import { ChatEmptyState } from "@/components/chat/chat-empty-state";
 import { ChatInput } from "@/components/chat/chat-input";
 import { ChatThread } from "@/components/chat/chat-thread";
+import { ModelSelect } from "@/components/chat/model-select";
 
 export function ChatPage() {
-  const { messages, isAssistantTyping, sendMessage } = useChatContext();
+  const {
+    messages,
+    isAssistantTyping,
+    models,
+    model,
+    setModel,
+    sendMessage,
+    stopGenerating,
+  } = useChatContext();
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -21,7 +30,19 @@ export function ChatPage() {
       ) : (
         <ChatThread messages={messages} />
       )}
-      <ChatInput onSend={sendMessage} disabled={isAssistantTyping} />
+      <ChatInput
+        onSend={sendMessage}
+        onStop={stopGenerating}
+        isGenerating={isAssistantTyping}
+        toolbar={
+          <ModelSelect
+            models={models}
+            value={model}
+            onChange={setModel}
+            disabled={isAssistantTyping}
+          />
+        }
+      />
     </div>
   );
 }

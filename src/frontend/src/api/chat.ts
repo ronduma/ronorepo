@@ -18,6 +18,7 @@ export type ChatTurn = {
  * and streams the model's reply back as plain text.
  *
  * @param messages - The conversation so far, ending with the new user message.
+ * @param model - Ollama model to use; the backend default when omitted.
  * @param signal - Optional `AbortSignal` to cancel the in-flight request.
  * @returns An async generator yielding decoded text chunks as they stream in.
  * @throws {ApiError} If the request fails with a non-2xx response.
@@ -25,12 +26,13 @@ export type ChatTurn = {
  */
 export async function* streamChatReply(
   messages: ChatTurn[],
+  model?: string | null,
   signal?: AbortSignal,
 ): AsyncGenerator<string> {
   const response = await apiFetch("/ollama/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, model }),
     signal,
   });
 

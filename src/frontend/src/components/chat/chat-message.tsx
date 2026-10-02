@@ -19,6 +19,23 @@ function formatTime(timestamp: number) {
   });
 }
 
+function TypingDots() {
+  return (
+    <span
+      className="flex h-5 items-center gap-1"
+      aria-label="Assistant is typing"
+    >
+      {[0, 150, 300].map((delay) => (
+        <span
+          key={delay}
+          className="size-1.5 animate-bounce rounded-full bg-muted-foreground"
+          style={{ animationDelay: `${delay}ms` }}
+        />
+      ))}
+    </span>
+  );
+}
+
 export function ChatMessage({ message }: { message: ChatMessageType }) {
   const isUser = message.role === "user";
 
@@ -48,7 +65,7 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
               : "bg-muted text-foreground",
           )}
         >
-          {message.content}
+          {message.content || <TypingDots />}
         </div>
         <span className="px-1 font-mono text-[10px] text-muted-foreground">
           {formatTime(message.createdAt)}

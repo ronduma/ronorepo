@@ -5,6 +5,7 @@
 import { useCallback, useRef, useState } from "react";
 
 import { streamChatReply } from "@/api/chat";
+import { useOllamaModels } from "@/hooks/use-ollama-models";
 import type { ChatMessage } from "@/components/chat/types";
 
 const NO_BACKEND_MESSAGE =
@@ -12,6 +13,9 @@ const NO_BACKEND_MESSAGE =
 
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { models, defaultModel } = useOllamaModels();
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const model = selectedModel ?? defaultModel;
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -50,7 +54,11 @@ export function useChat() {
 
       try {
         let received = false;
-        for await (const chunk of streamChatReply(history, controller.signal)) {
+        for await (const chunk of streamChatReply(
+          history,
+          model,
+          controller.signal,
+        )) {
           received = true;
           setMessages((prev) =>
             prev.map((m) =>
@@ -66,7 +74,17 @@ export function useChat() {
           );
         }
       } catch {
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted) {
+          // stopped by the user; don't leave an empty bubble behind
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId && !m.content
+                ? { ...m, content: "Stopped." }
+                : m,
+            ),
+          );
+          return;
+        }
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId ? { ...m, content: NO_BACKEND_MESSAGE } : m,
@@ -80,8 +98,14 @@ export function useChat() {
         }
       }
     },
-    [messages],
+    [messages, model],
   );
+
+  const stopGenerating = useCallback(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setIsAssistantTyping(false);
+  }, []);
 
   const resetChat = useCallback(() => {
     abortRef.current?.abort();
@@ -89,5 +113,14 @@ export function useChat() {
     setIsAssistantTyping(false);
   }, []);
 
-  return { messages, isAssistantTyping, sendMessage, resetChat };
+  return {
+    messages,
+    isAssistantTyping,
+    models,
+    model,
+    setModel: setSelectedModel,
+    sendMessage,
+    stopGenerating,
+    resetChat,
+  };
 }
