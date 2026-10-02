@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 # claude files
 .mcp.json
 docs/claude
+CLAUDE.md
+.claude
+skills-lock.json
