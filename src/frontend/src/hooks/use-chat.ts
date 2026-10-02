@@ -60,14 +60,18 @@ export function useChat() {
         );
       }
     } catch {
+      if (controller.signal.aborted) return;
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId ? { ...m, content: NO_BACKEND_MESSAGE } : m,
         ),
       );
     } finally {
-      setIsAssistantTyping(false);
-      abortRef.current = null;
+      // a reset may have superseded this request; don't clobber newer state
+      if (abortRef.current === controller) {
+        setIsAssistantTyping(false);
+        abortRef.current = null;
+      }
     }
   }, []);
 
