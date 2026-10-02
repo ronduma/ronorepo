@@ -1,37 +1,41 @@
 /**
- * API calls for the backend's chat endpoint.
+ * API calls for the backend's Ollama chat endpoint.
  */
 
 import { apiFetch } from "@/api";
+
+/** A single conversation turn as expected by `POST /api/ollama/chat`. */
+export type ChatTurn = {
+  role: "user" | "assistant";
+  content: string;
+};
 
 /**
  * Streams a chat reply from the backend, chunk by chunk, as they arrive.
  *
  * @remarks
- * Calls `POST /api/chat`, a FastAPI `StreamingResponse` endpoint that does
- * not exist yet on the backend (only `/api/` and `/api/health` are
- * implemented). Callers should catch failures and fall back to a
- * "no backend connected" message until the endpoint ships.
+ * Calls `POST /api/ollama/chat`, which proxies to the local Ollama server
+ * and streams the model's reply back as plain text.
  *
- * @param message - The user's chat message to send.
+ * @param messages - The conversation so far, ending with the new user message.
  * @param signal - Optional `AbortSignal` to cancel the in-flight request.
  * @returns An async generator yielding decoded text chunks as they stream in.
  * @throws {ApiError} If the request fails with a non-2xx response.
  * @throws {Error} If the response has no readable body.
  */
 export async function* streamChatReply(
-  message: string,
+  messages: ChatTurn[],
   signal?: AbortSignal,
 ): AsyncGenerator<string> {
-  const response = await apiFetch("/chat", {
+  const response = await apiFetch("/ollama/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ messages }),
     signal,
   });
 
   if (!response.body) {
-    throw new Error("POST /chat returned no response body");
+    throw new Error("POST /ollama/chat returned no response body");
   }
 
   const reader = response.body.getReader();

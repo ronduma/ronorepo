@@ -1,5 +1,7 @@
 from fastapi import APIRouter, FastAPI
 
+from routers import ollama
+
 app = FastAPI()
 router = APIRouter(prefix="/api")
 
@@ -14,4 +16,5 @@ async def health():
     return {"status": "ok"}
 
 
-app.include_router(router)        
+router.include_router(ollama.router)
+app.include_router(router)
