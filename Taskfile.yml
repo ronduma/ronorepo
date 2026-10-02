@@ -23,6 +23,14 @@ tasks:
     silent: true
   up:
     desc: spin up docker containers
+    env:
+      # under WSL2 the Windows host (where Ollama runs) is the default gateway;
+      # elsewhere fall back to host.docker.internal. An existing OLLAMA_BASE_URL wins.
+      OLLAMA_BASE_URL:
+        sh: |
+          if [ -n "$OLLAMA_BASE_URL" ]; then echo "$OLLAMA_BASE_URL"; exit; fi
+          gw=$(ip route 2>/dev/null | awk '/default/{print $3; exit}')
+          echo "http://${gw:-host.docker.internal}:11434"
     cmds:
       - docker compose -f ./"{{.BUILD_DIR}}"/docker-compose.yaml --env-file "{{.ENV_DIR}}/static.env" --env-file "{{.ENV_DIR}}/user.env" up -d
       - echo -e "\033[32m✅ [INFO]\033[0m donna is up and running! 🚀"
